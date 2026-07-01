@@ -9,7 +9,6 @@ void initialize_socklib()
     WSADATA wsa;
     WSAStartup(MAKEWORD(2, 2), &wsa);
 }
-
 SOCKET createtcpipv4sock()
 {
     SOCKET socketfd;
