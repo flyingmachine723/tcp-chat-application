@@ -3,6 +3,7 @@
 #include <ws2tcpip.h>
 #include <stdlib.h>
 #include <string.h>
+
 void initialize_socklib()
 {
     WSADATA wsa;
