@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+
 struct acceptedsocket
 {
     char username[100];
@@ -23,25 +24,24 @@ struct acceptedsocket *acceptincomingconnections(SOCKET serversocket)
     Acceptedsocket->address = address;
     Acceptedsocket->acceptedsuccessfully = Acceptedsocket->clientsocket != INVALID_SOCKET;
     if (!Acceptedsocket->acceptedsuccessfully)
-    {
         Acceptedsocket->error = WSAGetLastError();
-        ;
-    }
+
     return Acceptedsocket;
 }
 struct acceptedsocket *clients[100];
 static int clientsconnected = 0;
+
 DWORD WINAPI handleclient(LPVOID arg)
 {
     struct acceptedsocket *client = (struct acceptedsocket *)arg;
     char buffer[1024];
     char temp[1024];
-        int recievedbytes = recv(client->clientsocket, temp, sizeof(temp), 0);
-        if (recievedbytes > 0)
-        {
-            temp[recievedbytes] = '\0';
-            strcpy(client->username,temp);
-        }
+    int recievedbytes = recv(client->clientsocket, temp, sizeof(temp), 0);
+    if (recievedbytes > 0)
+    {
+        temp[recievedbytes] = '\0';
+        strcpy(client->username, temp);
+    }
     while (1)
     {
         int bytes = recv(client->clientsocket, buffer, sizeof(buffer), 0);
@@ -51,26 +51,24 @@ DWORD WINAPI handleclient(LPVOID arg)
         if (strcmp(buffer, "exit") == 0)
             break;
         char name[1024];
-        strcpy(name,client->username);
+        strcpy(name, client->username);
         strcat(name, ":");
         strcat(name, buffer);
         for (int i = 0; i < clientsconnected; i++)
-        {
             if (clients[i]->clientsocket != client->clientsocket)
-                send(clients[i]->clientsocket,name, strlen(name), 0);
+                send(clients[i]->clientsocket, name, strlen(name), 0);
         }
-    }
     closesocket(client->clientsocket);
     free(client);
     return 0;
 }
 
-int main()
+int main(void)
 {
     initialize_socklib();
     SOCKET serversocket;
     serversocket = createtcpipv4sock();
-    struct sockaddr_in *address = createipv4address("", 8080);         // done to listen to all possible addresses of the server
+    struct sockaddr_in *address = createipv4address("", 8080);                  // done to listen to all possible addresses of the server
     bind(serversocket, (struct sockaddr *)address, sizeof(struct sockaddr_in)); // bind accepts struct sockaddr* not struct sockaddr_in*
     listen(serversocket, 100);
     int i = 0;
