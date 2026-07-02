@@ -24,11 +24,7 @@ int main()
     SOCKET socketfd;
 
     socketfd = createtcpipv4sock();
-    char ip[100];
-    printf("Enter the server ip:");
-    scanf("%99s", ip);
-
-    struct sockaddr_in *address = createipv4address(ip, 8080);
+    struct sockaddr_in *address = createipv4address("20.40.53.204", 8080);
 
     int result = connect(socketfd, (struct sockaddr *)address, sizeof(struct sockaddr_in));
 
